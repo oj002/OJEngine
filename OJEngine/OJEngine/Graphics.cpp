@@ -52,40 +52,40 @@ Graphics::Graphics(Window *wnd)
 		1, 2, 3  // second triangle
 	};
 	unsigned int VBO, EBO;
-	glGenVertexArrays(1, &m_VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-
-	glBindVertexArray(m_VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+	GLCall(glGenVertexArrays(1, &m_VAO));
+	GLCall(glGenBuffers(1, &VBO));
+	GLCall(glGenBuffers(1, &EBO));
+	
+	GLCall(glBindVertexArray(m_VAO));
+	
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
+	
+	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
+	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
+	
 	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
+	GLCall(glEnableVertexAttribArray(0));
 	// texture coord attribute
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-
-
+	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
+	GLCall(glEnableVertexAttribArray(1));
+	
+	
 	// load and create a texture 
 	// -------------------------
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+	GLCall(glGenTextures(1, &m_texture));
+	GLCall(glBindTexture(GL_TEXTURE_2D, m_texture)); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
 										   // set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));	// set texture wrapping to GL_REPEAT (default wrapping method)
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 	// set texture filtering parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load image, create texture and generate mipmaps
-
+	
 	memset(m_imgData, 0, m_imgDataSize);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, wnd->getWidth(), wnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData);
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, wnd->getWidth(), wnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData));
 
 
 }
@@ -119,12 +119,12 @@ void Graphics::clear(unsigned char r, unsigned char g, unsigned char b, unsigned
 
 void Graphics::display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pWnd->getWidth(), m_pWnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData);
+	GLCall(glClear(GL_COLOR_BUFFER_BIT));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pWnd->getWidth(), m_pWnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData));
 
-	glUseProgram(m_shader);
-	glBindVertexArray(m_VAO);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	GLCall(glUseProgram(m_shader));
+	GLCall(glBindVertexArray(m_VAO));
+	GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0));
 
 	glfwSwapBuffers(m_pWnd->getWindow());
 
