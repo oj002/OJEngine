@@ -6,8 +6,8 @@ GLuint CreateShader(const std::string & vertexShader, const std::string & fragme
 
 Graphics::Graphics(Window *wnd)
 	: m_pWnd(wnd)
-	, m_imgDataSize(wnd->getWidth() * wnd->getHeight() * 4)
-	, m_imgData(new unsigned char[wnd->getWidth() * wnd->getHeight() * 4])
+	, m_imgDataSize(wnd->getWidth() * wnd->getHeight() * 3)
+	, m_imgData(new unsigned char[wnd->getWidth() * wnd->getHeight() * 3])
 {
 
 	std::string vertexShader(
@@ -85,7 +85,7 @@ Graphics::Graphics(Window *wnd)
 	// load image, create texture and generate mipmaps
 	
 	memset(m_imgData, 0, m_imgDataSize);
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, wnd->getWidth(), wnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wnd->getWidth(), wnd->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_imgData));
 
 
 }
@@ -95,32 +95,30 @@ Graphics::~Graphics()
 	//no need to call delete on m_imageData
 }
 
-void Graphics::clear(glm::tvec4<unsigned char> color)
+void Graphics::clear(glm::tvec3<unsigned char> color)
 {
-	for (unsigned int i = 0; i < m_imgDataSize; i += 4)
+	for (unsigned int i = 0; i < m_imgDataSize; i += 3)
 	{
 		m_imgData[i    ] = color.r;
 		m_imgData[i + 1] = color.g;
 		m_imgData[i + 2] = color.b;
-		m_imgData[i + 3] = color.a;
 	}
 }
 
-void Graphics::clear(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+void Graphics::clear(unsigned char r, unsigned char g, unsigned char b)
 {
 	for (unsigned int i = 0; i < m_imgDataSize; i += 4)
 	{
 		m_imgData[i    ] = r;
 		m_imgData[i + 1] = g;
 		m_imgData[i + 2] = b;
-		m_imgData[i + 3] = a;
 	}
 }
 
 void Graphics::display()
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
-	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_pWnd->getWidth(), m_pWnd->getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, m_imgData));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_pWnd->getWidth(), m_pWnd->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_imgData));
 
 	GLCall(glUseProgram(m_shader));
 	GLCall(glBindVertexArray(m_VAO));

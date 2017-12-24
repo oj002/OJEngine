@@ -12,6 +12,7 @@ public:
 	~Window();
 
 	inline bool closed() const { return glfwWindowShouldClose(m_pWindow); }
+	inline void pollEvent() { glfwPollEvents(); }
 
 	inline bool isKeyPressed(int keyCode) const  { return m_keys[keyCode]; }
 	inline bool isMouseButtonPressed(int keyCode) const { return m_mouseButtons[keyCode]; }
