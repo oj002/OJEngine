@@ -97,6 +97,119 @@ Graphics::~Graphics()
 	delete[] m_imgData;
 }
 
+void Graphics::drawLine(float x1, float y1, float x2, float y2, unsigned char r, unsigned char g, unsigned char b)
+{
+	int x, y, dx, dy, dx1, dy1, px, py, xe, ye, i;
+	dx = x2 - x1;
+	dy = y2 - y1;
+	dx1 = abs(dx);
+	dy1 = abs(dy);
+	px = 2 * dy1 - dx1;
+	py = 2 * dx1 - dy1;
+	if (dy1 <= dx1)
+	{
+		if (dx >= 0)
+		{
+			x = x1;
+			y = y1;
+			xe = x2;
+		}
+		else
+		{
+			x = x2;
+			y = y2;
+			xe = x1;
+		}
+		putpixel(x, y, r, g, b);
+		for (i = 0; x<xe; i++)
+		{
+			x = x + 1;
+			if (px<0)
+				px = px + 2 * dy1;
+			else
+			{
+				if ((dx<0 && dy<0) || (dx>0 && dy>0))
+					y = y + 1;
+				else
+					y = y - 1;
+				px = px + 2 * (dy1 - dx1);
+			}
+			putpixel(x, y, r, g, b);
+		}
+	}
+	else
+	{
+		if (dy >= 0)
+		{
+			x = x1;
+			y = y1;
+			ye = y2;
+		}
+		else
+		{
+			x = x2;
+			y = y2;
+			ye = y1;
+		}
+		putpixel(x, y, r, g, b);
+		for (i = 0; y<ye; i++)
+		{
+			y = y + 1;
+			if (py <= 0)
+				py = py + 2 * dx1;
+			else
+			{
+				if ((dx<0 && dy<0) || (dx>0 && dy>0))
+					x = x + 1;
+				else
+					x = x - 1;
+				py = py + 2 * (dx1 - dy1);
+			}
+			putpixel(x, y, r, g, b);
+		}
+	}
+}
+void Graphics::drawWireFrameModel(const std::vector<std::pair<float, float>>& vecModelCoordinates, float x, float y, float radius, float scale, unsigned char r, unsigned char g, unsigned char b)
+{
+	// pair.first = x coordinate
+	// pair.second = y coordinate
+
+	// Create translated model vector of coordinate pairs
+	std::vector<std::pair<float, float>> vecTransformedCoordinates;
+	int verts = vecModelCoordinates.size();
+	vecTransformedCoordinates.resize(verts);
+
+	// Rotate
+	for (int i = 0; i < verts; i++)
+	{
+		vecTransformedCoordinates[i].first = vecModelCoordinates[i].first * cosf(radius) - vecModelCoordinates[i].second * sinf(radius);
+		vecTransformedCoordinates[i].second = vecModelCoordinates[i].first * sinf(radius) + vecModelCoordinates[i].second * cosf(radius);
+	}
+
+	// Scale
+	for (int i = 0; i < verts; i++)
+	{
+		vecTransformedCoordinates[i].first = vecTransformedCoordinates[i].first * scale;
+		vecTransformedCoordinates[i].second = vecTransformedCoordinates[i].second * scale;
+	}
+
+	// Translate
+	for (int i = 0; i < verts; i++)
+	{
+		vecTransformedCoordinates[i].first = vecTransformedCoordinates[i].first + x;
+		vecTransformedCoordinates[i].second = vecTransformedCoordinates[i].second + y;
+	}
+
+	// Draw Closed Polygon
+	for (int i = 0; i < verts + 1; i++)
+	{
+		int j = (i + 1);
+		drawLine((int)vecTransformedCoordinates[i % verts].first, (int)vecTransformedCoordinates[i % verts].second,
+			(int)vecTransformedCoordinates[j % verts].first, (int)vecTransformedCoordinates[j % verts].second, r, g, b);
+	}
+}
+
+
 void Graphics::clear(glm::tvec3<unsigned char> color)
 {
 	for (unsigned int i = 0; i < m_imgDataSize; i += 3)

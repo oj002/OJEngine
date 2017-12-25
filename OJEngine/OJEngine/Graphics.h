@@ -1,6 +1,7 @@
 #pragma once
 #include "Macros.h"
 #include "Window.h"
+#include <vector>
 
 class Graphics
 {
@@ -10,39 +11,68 @@ public:
 
 	inline void putpixel(glm::tvec2<unsigned int> pos, glm::tvec3<unsigned char> color)
 	{
-		unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
-		m_imgData[pixelPos] = color.r;
-		m_imgData[pixelPos + 1] = color.g;
-		m_imgData[pixelPos + 2] = color.b;
+		if (pos.x >= 0 && pos.x < m_windowWidth && pos.y >= 0 && pos.y < m_windowHeight)
+		{
+			unsigned char* p = m_imgData;
+			p += pos.y * m_windowWidth * 3 + pos.x * 3;
+			*p = color.r;
+			++p;
+			*p = color.g;
+			++p;
+			*p = color.b;
+		}
 	}
 
 	inline void putpixel(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
 	{
-		unsigned int pixelPos = y * m_windowWidth * 3 + x * 3;
-		m_imgData[pixelPos] = r;
-		m_imgData[pixelPos + 1] = g;
-		m_imgData[pixelPos + 2] = b;
+		if (x >= 0 && x < m_windowWidth && y >= 0 && y < m_windowHeight)
+		{
+			unsigned char* p = m_imgData;
+			p += y * m_windowWidth * 3 + x * 3;
+			*p = r;
+			++p;
+			*p = g;
+			++p;
+			*p = b;
+		}
 	}
 
 	inline glm::tvec3<unsigned char> getPixel(glm::tvec2<unsigned int> pos)
 	{
-		unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
-		return {
-			m_imgData[pixelPos],
-			m_imgData[pixelPos + 1],
-			m_imgData[pixelPos + 2]
-		};
+		if (pos.x >= 0 && pos.x < m_windowWidth && pos.y >= 0 && pos.y < m_windowHeight)
+		{
+			unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
+			return {
+				m_imgData[pixelPos],
+				m_imgData[pixelPos + 1],
+				m_imgData[pixelPos + 2]
+			};
+		}
+		else
+		{
+			DEBUG_ERROR("pixel not in window");
+		}
 	}
 
 	inline glm::tvec3<unsigned char> getPixel(unsigned int x, unsigned int y)
 	{
-		unsigned int pixelPos = y * m_windowWidth * 3 + x * 3;
-		return {
-			m_imgData[pixelPos],
-			m_imgData[pixelPos + 1],
-			m_imgData[pixelPos + 2]
-		};
+		if (x >= 0 && x < m_windowWidth && y >= 0 && y < m_windowHeight)
+		{
+			unsigned int pixelPos = y * m_windowWidth * 3 + x * 3;
+			return {
+				m_imgData[pixelPos],
+				m_imgData[pixelPos + 1],
+				m_imgData[pixelPos + 2]
+			};
+		}
+		else
+		{
+			DEBUG_ERROR("pixel not in window");
+		}
 	}
+
+	void drawLine(float x1, float y1, float x2, float y2, unsigned char r, unsigned char g, unsigned char b);
+	void Graphics::drawWireFrameModel(const std::vector<std::pair<float, float>>& vecModelCoordinates, float x, float y, float radius, float scale, unsigned char r, unsigned char g, unsigned char b);
 
 	inline void clear(unsigned char grayLevel = 0) { memset(m_imgData, grayLevel, m_imgDataSize); }
 	void clear(glm::tvec3<unsigned char> color);
