@@ -8,6 +8,8 @@ Graphics::Graphics(Window *wnd)
 	: m_pWnd(wnd)
 	, m_imgDataSize(wnd->getWidth() * wnd->getHeight() * 3)
 	, m_imgData(new unsigned char[wnd->getWidth() * wnd->getHeight() * 3])
+	, m_windowWidth(wnd->getWidth())
+	, m_windowHeight(wnd->getHeight())
 {
 
 	std::string vertexShader(
@@ -42,10 +44,10 @@ Graphics::Graphics(Window *wnd)
 	// ------------------------------------------------------------------
 	float vertices[] = {
 		// positions			// texture coords
-		1.0f,  1.0f, 0.0f,		1.0f, 1.0f,	// top right
-		1.0f, -1.0f, 0.0f,		1.0f, 0.0f,	// bottom right
-		-1.0f, -1.0f, 0.0f,		0.0f, 0.0f,	// bottom left
-		-1.0f,  1.0f, 0.0f,		0.0f, 1.0f	// top left 
+		1.0f,  1.0f, 0.0f,		1.0f, 0.0f,	// top right
+		1.0f, -1.0f, 0.0f,		1.0f, 1.0f,	// bottom right
+		-1.0f, -1.0f, 0.0f,		0.0f, 1.0f,	// bottom left
+		-1.0f,  1.0f, 0.0f,		0.0f, 0.0f	// top left 
 	};
 	unsigned int indices[] = {
 		0, 1, 3, // first triangle
@@ -55,35 +57,35 @@ Graphics::Graphics(Window *wnd)
 	GLCall(glGenVertexArrays(1, &m_VAO));
 	GLCall(glGenBuffers(1, &VBO));
 	GLCall(glGenBuffers(1, &EBO));
-	
+
 	GLCall(glBindVertexArray(m_VAO));
-	
+
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, VBO));
 	GLCall(glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW));
-	
+
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO));
 	GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW));
-	
+
 	// position attribute
 	GLCall(glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0));
 	GLCall(glEnableVertexAttribArray(0));
 	// texture coord attribute
 	GLCall(glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))));
 	GLCall(glEnableVertexAttribArray(1));
-	
-	
+
+
 	// load and create a texture 
 	// -------------------------
 	GLCall(glGenTextures(1, &m_texture));
 	GLCall(glBindTexture(GL_TEXTURE_2D, m_texture)); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-										   // set the texture wrapping parameters
+													 // set the texture wrapping parameters
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));	// set texture wrapping to GL_REPEAT (default wrapping method)
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 	// set texture filtering parameters
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load image, create texture and generate mipmaps
-	
+
 	memset(m_imgData, 0, m_imgDataSize);
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, wnd->getWidth(), wnd->getHeight(), 0, GL_RGB, GL_UNSIGNED_BYTE, m_imgData));
 
@@ -92,14 +94,14 @@ Graphics::Graphics(Window *wnd)
 
 Graphics::~Graphics()
 {
-	//no need to call delete on m_imageData
+	delete[] m_imgData;
 }
 
 void Graphics::clear(glm::tvec3<unsigned char> color)
 {
 	for (unsigned int i = 0; i < m_imgDataSize; i += 3)
 	{
-		m_imgData[i    ] = color.r;
+		m_imgData[i] = color.r;
 		m_imgData[i + 1] = color.g;
 		m_imgData[i + 2] = color.b;
 	}
@@ -109,7 +111,7 @@ void Graphics::clear(unsigned char r, unsigned char g, unsigned char b)
 {
 	for (unsigned int i = 0; i < m_imgDataSize; i += 4)
 	{
-		m_imgData[i    ] = r;
+		m_imgData[i] = r;
 		m_imgData[i + 1] = g;
 		m_imgData[i + 2] = b;
 	}

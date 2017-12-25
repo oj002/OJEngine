@@ -4,9 +4,11 @@
 Window wnd(800, 600, "hello");
 Graphics gfx(&wnd);
 
+
+
 int main()
 {
-
+	
 	float x = 0, y = 0;
 	
 	timer clock;
@@ -31,7 +33,8 @@ int main()
 		{
 			x += 250 * dt;
 		}
-		gfx.setPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), 255, 0, 0);
+		gfx.putpixel(x, y, 255,255,255);
+		//gfx.putpixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), 255, 0, 0);
 
 		gfx.display();
 		wnd.pollEvent();

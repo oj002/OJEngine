@@ -8,25 +8,25 @@ public:
 	Graphics(Window *wnd);
 	~Graphics();
 
-	inline void setPixel(glm::tvec2<unsigned int> pos, glm::tvec3<unsigned char> color) 
+	inline void putpixel(glm::tvec2<unsigned int> pos, glm::tvec3<unsigned char> color)
 	{
-		unsigned int pixelPos = (std::abs((int)pos.y - m_pWnd->getHeight() + 1)) * m_pWnd->getWidth() * 3 + (int)pos.x * 3;
-		m_imgData[pixelPos    ] = color.r; 
+		unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
+		m_imgData[pixelPos] = color.r;
 		m_imgData[pixelPos + 1] = color.g;
 		m_imgData[pixelPos + 2] = color.b;
 	}
 
-	inline void setPixel(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
+	inline void putpixel(unsigned int x, unsigned int y, unsigned char r, unsigned char g, unsigned char b)
 	{
-		unsigned int pixelPos = (std::abs((int)y - m_pWnd->getHeight() + 1)) * m_pWnd->getWidth() * 3 + (int)x * 3;
-		m_imgData[pixelPos    ] = r;
+		unsigned int pixelPos = y * m_windowWidth * 3 + x * 3;
+		m_imgData[pixelPos] = r;
 		m_imgData[pixelPos + 1] = g;
 		m_imgData[pixelPos + 2] = b;
 	}
 
 	inline glm::tvec3<unsigned char> getPixel(glm::tvec2<unsigned int> pos)
 	{
-		unsigned int pixelPos = (std::abs((int)pos.y - m_pWnd->getHeight() + 1)) * m_pWnd->getWidth() * 3 + (int)pos.x * 3;
+		unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
 		return {
 			m_imgData[pixelPos],
 			m_imgData[pixelPos + 1],
@@ -36,7 +36,7 @@ public:
 
 	inline glm::tvec3<unsigned char> getPixel(unsigned int x, unsigned int y)
 	{
-		unsigned int pixelPos = (std::abs((int)y - m_pWnd->getHeight() + 1)) * m_pWnd->getWidth() * 3 + (int)x * 3;
+		unsigned int pixelPos = y * m_windowWidth * 3 + x * 3;
 		return {
 			m_imgData[pixelPos],
 			m_imgData[pixelPos + 1],
@@ -44,8 +44,8 @@ public:
 		};
 	}
 
-	inline void clear(unsigned char grayLevel) { memset(m_imgData, grayLevel, m_imgDataSize); }
-	void clear(glm::tvec3<unsigned char> color = { 0, 0, 0 });
+	inline void clear(unsigned char grayLevel = 0) { memset(m_imgData, grayLevel, m_imgDataSize); }
+	void clear(glm::tvec3<unsigned char> color);
 	void clear(unsigned char r, unsigned char g, unsigned char b);
 	void display();
 
@@ -56,4 +56,6 @@ private:
 	unsigned int m_shader;
 	const unsigned int m_imgDataSize;
 	unsigned char* m_imgData;
+
+	int m_windowWidth, m_windowHeight;
 };
