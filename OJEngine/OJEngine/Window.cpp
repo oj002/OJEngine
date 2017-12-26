@@ -43,6 +43,21 @@ Window::~Window()
 	glfwTerminate();
 }
 
+void Window::pollEvent()
+{
+	for (int i = 0; i < 1024; i++)
+	{
+		if (i < 32)
+		{
+			m_mouseButtons[i].pressed = false;
+			m_mouseButtons[i].released = false;
+		}
+		m_keys[i].pressed = false;
+		m_keys[i].released = false;
+	}
+	glfwPollEvents();
+}
+
 
 void resize_callback(GLFWwindow * window, int width, int height)
 {
@@ -55,13 +70,33 @@ void resize_callback(GLFWwindow * window, int width, int height)
 void key_callback(GLFWwindow * window, int key, int scancode, int action, int mods)
 {
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	win->m_keys[key] = action != GLFW_RELEASE;
+
+	if (action != GLFW_RELEASE)
+	{
+		win->m_keys[key].pressed = !win->m_keys[key].held;
+		win->m_keys[key].held = true;
+	}
+	else
+	{
+		win->m_keys[key].released = true;
+		win->m_keys[key].held = false;
+	}
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	win->m_mouseButtons[button] = action != GLFW_RELEASE;
+
+	if (action != GLFW_RELEASE)
+	{
+		win->m_mouseButtons[button].pressed = !win->m_mouseButtons[button].held;
+		win->m_mouseButtons[button].held = true;
+	}
+	else
+	{
+		win->m_mouseButtons[button].released = true;
+		win->m_mouseButtons[button].held = false;
+	}
 }
 
 void cursor_position_callback(GLFWwindow * window, double xpos, double ypos)

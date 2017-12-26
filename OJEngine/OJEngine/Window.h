@@ -4,19 +4,26 @@
 #include <glm\glm.hpp>
 
 #include "Macros.h"
-
+#define ACCTION_RELEASED               3
 class Window
 {
 public:
+	struct acction
+	{
+		bool pressed = false;
+		bool held = false;
 
+		bool released = false;
+	};
 	Window(int width, int height, const char* title);
 	~Window();
 
 	inline bool closed() const { return glfwWindowShouldClose(m_pWindow); }
-	inline void pollEvent() { glfwPollEvents(); }
+	void pollEvent();
 
-	inline bool isKeyPressed(int keyCode) const { return m_keys[keyCode]; }
-	inline bool isMouseButtonPressed(int keyCode) const { return m_mouseButtons[keyCode]; }
+	inline acction getKey(int keyCode) const { return m_keys[keyCode]; }
+	inline acction getMouseButton(int keyCode) const { return m_mouseButtons[keyCode]; }
+
 	inline glm::vec2 getCursorPos() const { return m_mousePos; }
 
 	inline int getWidth() const { return m_width; }
@@ -33,7 +40,7 @@ private:
 private:
 	GLFWwindow* m_pWindow;
 	int m_width, m_height;
-	bool m_keys[1024];
-	bool m_mouseButtons[32];
+	acction m_keys[1024];
+	acction m_mouseButtons[32];
 	glm::vec2 m_mousePos;
 };

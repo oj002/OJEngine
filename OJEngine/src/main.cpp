@@ -17,24 +17,23 @@ int main()
 	{
 		gfx.clear();
 
-		if (wnd.isKeyPressed(KEY_W))
+		if (wnd.getKey(KEY_W).held)
 		{
 			y -= 250 * dt;
 		}
-		if (wnd.isKeyPressed(KEY_A))
+		if (wnd.getKey(KEY_A).held)
 		{
 			x -= 250 * dt;
 		}
-		if (wnd.isKeyPressed(KEY_S))
+		if (wnd.getKey(KEY_S).held)
 		{
 			y += 250 * dt;
 		}
-		if (wnd.isKeyPressed(KEY_D))
+		if (wnd.getKey(KEY_D).held)
 		{
 			x += 250 * dt;
 		}
 		gfx.putpixel(x, y, 255,255,255);
-		//gfx.putpixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y), 255, 0, 0);
 
 		gfx.display();
 		wnd.pollEvent();

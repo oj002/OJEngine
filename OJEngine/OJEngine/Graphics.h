@@ -9,12 +9,12 @@ public:
 	Graphics(Window *wnd);
 	~Graphics();
 
-	inline void putpixel(glm::tvec2<unsigned int> pos, glm::tvec3<unsigned char> color)
+	inline void putpixel(unsigned int x, unsigned int y, glm::tvec3<unsigned char> color)
 	{
-		if (pos.x >= 0 && pos.x < m_windowWidth && pos.y >= 0 && pos.y < m_windowHeight)
+		if (x >= 0 && x < m_windowWidth && y >= 0 && y < m_windowHeight)
 		{
 			unsigned char* p = m_imgData;
-			p += pos.y * m_windowWidth * 3 + pos.x * 3;
+			p += y * m_windowWidth * 3 + x * 3;
 			*p = color.r;
 			++p;
 			*p = color.g;
@@ -34,23 +34,6 @@ public:
 			*p = g;
 			++p;
 			*p = b;
-		}
-	}
-
-	inline glm::tvec3<unsigned char> getPixel(glm::tvec2<unsigned int> pos)
-	{
-		if (pos.x >= 0 && pos.x < m_windowWidth && pos.y >= 0 && pos.y < m_windowHeight)
-		{
-			unsigned int pixelPos = pos.y * m_windowWidth * 3 + pos.x * 3;
-			return {
-				m_imgData[pixelPos],
-				m_imgData[pixelPos + 1],
-				m_imgData[pixelPos + 2]
-			};
-		}
-		else
-		{
-			DEBUG_ERROR("pixel not in window");
 		}
 	}
 
